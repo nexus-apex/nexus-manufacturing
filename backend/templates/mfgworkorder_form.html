@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} MFGWorkOrder | NexusMfg{% endblock %}
+{% block page_title %}{% if editing %}Edit MFGWorkOrder{% else %}New MFGWorkOrder{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Wo Number</label>
+        <input type="text" name="wo_number" value="{{ record.wo_number|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Product Name</label>
+        <input type="text" name="product_name" value="{{ record.product_name|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Quantity</label>
+        <input type="number" name="quantity" value="{{ record.quantity|default:'0' }}">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="planned" {% if record.status == 'planned' %}selected{% endif %}>Planned</option>
+          <option value="in_production" {% if record.status == 'in_production' %}selected{% endif %}>In Production</option>
+          <option value="quality_check" {% if record.status == 'quality_check' %}selected{% endif %}>Quality Check</option>
+          <option value="completed" {% if record.status == 'completed' %}selected{% endif %}>Completed</option>
+          <option value="cancelled" {% if record.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Start Date</label>
+        <input type="date" name="start_date" value="{{ record.start_date|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Due Date</label>
+        <input type="date" name="due_date" value="{{ record.due_date|date:'Y-m-d'|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Assigned To</label>
+        <input type="text" name="assigned_to" value="{{ record.assigned_to|default:'' }}">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} MFGWorkOrder</button>
+      <a href="/mfgworkorders/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Billofmaterials | NexusMfg{% endblock %}
+{% block page_title %}Billofmaterials{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search billofmaterials...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+      <option value="obsolete" {% if status_filter == 'obsolete' %}selected{% endif %}>Obsolete</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/billofmaterials/create/" class="btn btn-primary">+ New BillOfMaterial</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Product Name</th><th>Component</th><th>Quantity</th><th>Unit</th><th>Unit Cost</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/billofmaterials/{{ r.pk }}/edit/"><strong>{{ r.product_name }}</strong></a></td>
+        <td>{{ r.component|default:"-" }}</td>
+        <td>{{ r.quantity|default:"-" }}</td>
+        <td>{{ r.unit|default:"-" }}</td>
+        <td>{{ r.unit_cost|floatformat:2 }}</td>
+        <td class="actions">
+          <a href="/billofmaterials/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/billofmaterials/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No billofmaterials found.</p>
+    <a href="/billofmaterials/create/" class="btn btn-primary" style="margin-top:1rem">Create BillOfMaterial</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

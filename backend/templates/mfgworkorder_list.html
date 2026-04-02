@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Mfgworkorders | NexusMfg{% endblock %}
+{% block page_title %}Mfgworkorders{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search mfgworkorders...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      <option value="planned" {% if status_filter == 'planned' %}selected{% endif %}>Planned</option>
+      <option value="in_production" {% if status_filter == 'in_production' %}selected{% endif %}>In Production</option>
+      <option value="quality_check" {% if status_filter == 'quality_check' %}selected{% endif %}>Quality Check</option>
+      <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+      <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/mfgworkorders/create/" class="btn btn-primary">+ New MFGWorkOrder</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Wo Number</th><th>Product Name</th><th>Quantity</th><th>Status</th><th>Start Date</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/mfgworkorders/{{ r.pk }}/edit/"><strong>{{ r.wo_number }}</strong></a></td>
+        <td>{{ r.product_name|default:"-" }}</td>
+        <td>{{ r.quantity|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_status_display }}</span></td>
+        <td style="color:var(--muted)">{{ r.start_date|date:"M d, Y"|default:"-" }}</td>
+        <td class="actions">
+          <a href="/mfgworkorders/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/mfgworkorders/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No mfgworkorders found.</p>
+    <a href="/mfgworkorders/create/" class="btn btn-primary" style="margin-top:1rem">Create MFGWorkOrder</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
